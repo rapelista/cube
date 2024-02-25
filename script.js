@@ -1,17 +1,16 @@
 import {
     BoxGeometry,
-    Camera,
     DirectionalLight,
-    DirectionalLightHelper,
-    GridHelper,
     Group,
     Mesh,
     MeshPhongMaterial,
     PerspectiveCamera,
     PointLight,
-    PointLightHelper,
     Scene,
     WebGLRenderer,
+    GridHelper,
+    DirectionalLightHelper,
+    PointLightHelper,
 } from "three";
 import { OrbitControls } from "three/examples/jsm/Addons";
 
@@ -80,10 +79,11 @@ pointLightE.position.set(-0.8, 0, 1.2);
 lights.add(pointLightE);
 // lights.add(new PointLightHelper(pointLightE));
 
-const directionalLight = new DirectionalLight(0xffffff, 0.2);
-directionalLight.position.y = 5;
-lights.add(directionalLight);
-// lights.add(new DirectionalLightHelper(directionalLight));
+const directionalLight = new DirectionalLight(0xffffff);
+directionalLight.position.z = 5;
+directionalLight.position.y = 0;
+scene.add(directionalLight);
+// scene.add(new DirectionalLightHelper(directionalLight));
 
 /**
  * Controls
@@ -106,12 +106,21 @@ const animation = () => {
 
     lights.rotation.y += 0.001;
 
+    directionalLight.intensity =
+        Math.sin(new Date().getTime() * 0.0012) * 0.012;
+
     controls.update();
     renderer.render(scene, camera);
 };
 
 const main = () => {
     animation();
+
+    window.addEventListener("resize", () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    });
 };
 
 main();
