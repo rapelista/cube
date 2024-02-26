@@ -104,7 +104,7 @@ scene.add(directionalLight);
  * Controls
  */
 const controls = new OrbitControls(camera, renderer.domElement);
-camera.position.y = Math.PI - 0.5;
+camera.position.y = -Math.PI + 0.5;
 controls.update();
 
 /**
@@ -115,6 +115,10 @@ let rotate = () => {
     return Math.PI * 0.002;
 };
 
+let scale = (x) => {
+    return Math.cos(x * 0.0005) / 4 + 1;
+};
+
 const animation = () => {
     const now = new Date().getTime();
     requestAnimationFrame(animation);
@@ -123,11 +127,16 @@ const animation = () => {
     mesh.rotation.y += rotate(now);
     mesh.rotation.z += rotate(now);
 
+    mesh.scale.x = scale(now);
+    mesh.scale.y = scale(now);
+    mesh.scale.z = scale(now);
+
     lights.rotation.y += 0.001;
 
     directionalLight.intensity = Math.sin(now * 0.0012) * 0.0001;
 
     torusMesh.rotation.x += Math.cos(now * 0.002) * 0.001;
+    torusMesh.rotation.y += Math.cos(now * 0.002) * 0.001;
     torusMesh.rotation.z -= 0.002;
     torusPointLightA.intensity += Math.cos(now * 0.001) * 0.002;
 
@@ -136,7 +145,14 @@ const animation = () => {
 };
 
 const main = () => {
+    const { innerHeight, innerWidth } = window;
+    console.log(innerWidth / 2, innerHeight / 2);
     animation();
+
+    window.addEventListener("mousemove", (event) => {
+        torusMesh.rotation.y += (innerWidth / 2 - event.clientX) * 0.000001;
+        torusMesh.rotation.y += (innerHeight / 2 - event.clientY) * 0.000001;
+    });
 
     window.addEventListener("resize", () => {
         camera.aspect = window.innerWidth / window.innerHeight;
@@ -148,6 +164,10 @@ const main = () => {
         link.addEventListener("click", () => {
             const now = new Date().getTime();
 
+            scale = () => {
+                return mesh.scale.x;
+            };
+
             rotate = (date) => {
                 const { scale } = mesh;
 
@@ -158,9 +178,9 @@ const main = () => {
 
                     return;
                 } else {
-                    scale.x -= 0.002;
-                    scale.y -= 0.002;
-                    scale.z -= 0.002;
+                    scale.x -= 0.0025;
+                    scale.y -= 0.0025;
+                    scale.z -= 0.0025;
 
                     const time = new Date().getTime();
                     const x = Math.floor((time - now) * 0.001) + 2;
