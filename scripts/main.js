@@ -15,6 +15,7 @@ import {
     PointLightHelper,
 } from "three";
 import { OrbitControls } from "three/examples/jsm/Addons";
+import { gsap } from "gsap/gsap-core";
 
 /**
  * Scene
@@ -42,6 +43,7 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 /**
  * Object
  */
+
 const boxAqua = new Group();
 scene.add(boxAqua);
 
@@ -146,8 +148,6 @@ const animation = () => {
 
 const main = () => {
     const { innerHeight, innerWidth } = window;
-    console.log(innerWidth / 2, innerHeight / 2);
-    animation();
 
     window.addEventListener("mousemove", (event) => {
         torusMesh.rotation.y += (innerWidth / 2 - event.clientX) * 0.000001;
@@ -162,6 +162,18 @@ const main = () => {
 
     document.querySelectorAll("nav a").forEach((link) => {
         link.addEventListener("click", () => {
+            const tl = gsap.timeline();
+
+            tl.to(torusGroup.rotation, {
+                delay: Math.PI * 0.1,
+                x: Math.PI / 2,
+            });
+            tl.to(torusGroup.scale, {
+                x: 1.5,
+                y: 1.5,
+                duration: 1,
+            });
+
             const now = new Date().getTime();
 
             scale = () => {
@@ -189,6 +201,8 @@ const main = () => {
             };
         });
     });
+
+    animation();
 };
 
 main();
